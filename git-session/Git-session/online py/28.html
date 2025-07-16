@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🎉 Happy Birthday Advanced</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(to top right, #ffe0f0, #ffc3a0);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Comic Sans MS', cursive;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #fff;
+      text-shadow: 2px 2px 8px #ff69b4;
+      animation: glow 1s infinite alternate;
+    }
+
+    .cake {
+      position: relative;
+      width: 200px;
+      height: 150px;
+      background: #ff69b4;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 20, 147, 0.6);
+    }
+
+    .cake::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 50px;
+      background: orange;
+      border-radius: 10px;
+      animation: flame 0.6s infinite alternate;
+    }
+
+    @keyframes flame {
+      from { height: 40px; opacity: 0.8; transform: scaleY(1); }
+      to { height: 45px; opacity: 1; transform: scaleY(1.1); }
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #ff69b4; }
+      to { text-shadow: 0 0 20px #ff1493; }
+    }
+
+    .wish {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #333;
+      font-weight: bold;
+      border-right: 2px solid;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: typing 5s steps(40) 1s forwards;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    .controls {
+      margin-top: 30px;
+    }
+
+    .controls button {
+      padding: 10px 20px;
+      font-size: 1em;
+      margin: 0 5px;
+      background-color: #ff69b4;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .controls button:hover {
+      background-color: #ff1493;
+    }
+
+    .hidden-message {
+      opacity: 0;
+      transition: opacity 1s;
+      font-size: 1.2em;
+      color: #000;
+      margin-top: 15px;
+    }
+
+    .visible {
+      opacity: 1 !important;
+    }
+
+    .party-mode {
+      background: linear-gradient(90deg, #ff8a00, #e52e71, #9b00ff, #00cfff);
+      background-size: 400% 400%;
+      animation: partyBg 8s ease infinite;
+    }
+
+    @keyframes partyBg {
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>🎂 Happy Birthday 🎉</h1>
+
+  <canvas id="confetti"></canvas>
+
+  <div class="cake"></div>
+  <div class="wish">Wishing you endless cake and joy today! 🎁</div>
+  <div class="hidden-message" id="surpriseMsg">🎈 You’re more amazing than all the stars ✨</div>
+
+  <div class="controls">
+    <button onclick="toggleMusic()">🔊 Toggle Music</button>
+    <button onclick="showSurprise()">🎁 Reveal Surprise</button>
+    <button onclick="partyMode()">🕺 Party Mode</button>
+    <button onclick="takeScreenshot()">📸 Save Screenshot</button>
+  </div>
+
+  <audio id="birthdayMusic" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // Confetti Setup
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    let confetti = [];
+    const colors = ['#ff0', '#0f0', '#0ff', '#f0f', '#f00', '#00f'];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function createConfettiPiece() {
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * 20 + 10,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        tilt: Math.floor(Math.random() * 10) - 10,
+        tiltAngleIncremental: Math.random() * 0.1 + 0.05,
+        tiltAngle: 0
+      };
+    }
+
+    function drawConfettiPiece(p) {
+      ctx.beginPath();
+      ctx.lineWidth = p.r;
+      ctx.strokeStyle = p.color;
+      ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+      ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
+      ctx.stroke();
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confetti.forEach((p, i) => {
+        p.tiltAngle += p.tiltAngleIncremental;
+        p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+        p.tilt = Math.sin(p.tiltAngle) * 15;
+        drawConfettiPiece(p);
+        if (p.y > canvas.height) confetti[i] = createConfettiPiece();
+      });
+      requestAnimationFrame(animateConfetti);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    for (let i = 0; i < 100; i++) confetti.push(createConfettiPiece());
+    animateConfetti();
+
+    // Toggle Music
+    const music = document.getElementById("birthdayMusic");
+    function toggleMusic() {
+      if (music.paused) {
+        music.play();
+      } else {
+        music.pause();
+      }
+    }
+
+    // Surprise Message
+    function showSurprise() {
+      const msg = document.getElementById("surpriseMsg");
+      msg.classList.add("visible");
+    }
+
+    // Party Mode
+    function partyMode() {
+      document.body.classList.toggle("party-mode");
+    }
+
+    // Screenshot
+    function takeScreenshot() {
+      html2canvas(document.body).then(canvas => {
+        let link = document.createElement('a');
+        link.download = 'birthday_screenshot.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+  </script>
+
+  <!-- Screenshot Support -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+</body>
+</html>

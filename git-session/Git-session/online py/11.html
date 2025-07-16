@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🌟 Birthday Surprise</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      font-family: 'Comic Sans MS', cursive;
+      background: black;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    .content {
+      text-align: center;
+      z-index: 10;
+    }
+
+    h1 {
+      font-size: 3em;
+      text-shadow: 0 0 10px #f0f;
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #f0f; }
+      to { text-shadow: 0 0 20px #0ff; }
+    }
+
+    input {
+      padding: 10px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1.2em;
+      background: #ff69b4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      margin: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #ff1493;
+    }
+
+    #message {
+      font-size: 1.4em;
+      margin-top: 20px;
+      min-height: 50px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars"></canvas>
+
+  <div class="content">
+    <input type="text" id="nameInput" placeholder="Enter your name" />
+    <br />
+    <button onclick="startParty()">🎉 Start Surprise</button>
+    <div id="message"></div>
+  </div>
+
+  <audio id="music" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // 🌌 Starfield Animation
+    const starCanvas = document.getElementById("stars");
+    const ctx = starCanvas.getContext("2d");
+    let stars = [];
+
+    function resizeStarCanvas() {
+      starCanvas.width = window.innerWidth;
+      starCanvas.height = window.innerHeight;
+    }
+
+    function createStars(count = 100) {
+      stars = [];
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * starCanvas.width,
+          y: Math.random() * starCanvas.height,
+          r: Math.random() * 1.5 + 0.5,
+          speed: Math.random() * 0.5 + 0.2
+        });
+      }
+    }
+
+    function drawStars() {
+      ctx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+      ctx.fillStyle = "#ffffff";
+      stars.forEach(star => {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.r, 0, 2 * Math.PI);
+        ctx.fill();
+        star.y += star.speed;
+        if (star.y > starCanvas.height) {
+          star.y = 0;
+          star.x = Math.random() * starCanvas.width;
+        }
+      });
+      requestAnimationFrame(drawStars);
+    }
+
+    window.addEventListener("resize", () => {
+      resizeStarCanvas();
+      createStars();
+    });
+
+    resizeStarCanvas();
+    createStars(150);
+    drawStars();
+
+    // 🎉 Birthday Surprise
+    function startParty() {
+      const name = document.getElementById("nameInput").value.trim() || "You";
+      const messageDiv = document.getElementById("message");
+      const msg = `🎂 Happy Birthday, ${name}! May your wishes come true! 🎁`;
+      messageDiv.textContent = msg;
+
+      // 🔊 Play music
+      document.getElementById("music").play();
+
+      // 🗣️ Speak message
+      const utter = new SpeechSynthesisUtterance(`Happy Birthday, ${name}!`);
+      utter.pitch = 1.2;
+      utter.rate = 0.9;
+      utter.lang = 'en-US';
+      speechSynthesis.speak(utter);
+    }
+  </script>
+</body>
+</html>

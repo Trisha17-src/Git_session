@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happy Birthday Bhumi! 🎉</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, black);
+      font-family: 'Comic Sans MS', cursive;
+      text-align: center;
+      overflow: hidden;
+      color: #fff;
+    }
+
+    h1 {
+      margin-top: 40px;
+      font-size: 3em;
+      text-shadow: 2px 2px 4px #000;
+    }
+
+    button {
+      background: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 18px;
+      color: white;
+      margin: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #ff79a9;
+    }
+
+    #wish {
+      font-size: 1.5em;
+      margin: 20px;
+      display: none;
+    }
+
+    #image {
+      display: none;
+      width: 300px;
+      margin-top: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px #fff;
+    }
+
+    #balloons {
+      display: none;
+      position: relative;
+      height: 200px;
+      margin-top: 20px;
+    }
+
+    .balloon {
+      width: 60px;
+      height: 80px;
+      border-radius: 50%;
+      position: absolute;
+      animation: float 6s infinite ease-in-out;
+    }
+
+    .balloon::after {
+      content: '';
+      position: absolute;
+      width: 2px;
+      height: 40px;
+      background: #333;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-50px); }
+      100% { transform: translateY(0); }
+    }
+
+    /* Fireworks canvas */
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Party lights */
+    .lights {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      z-index: 1;
+    }
+
+    .light {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      animation: blink 1s infinite alternate;
+    }
+
+    .light:nth-child(1) { background: red; animation-delay: 0s; }
+    .light:nth-child(2) { background: yellow; animation-delay: 0.2s; }
+    .light:nth-child(3) { background: lime; animation-delay: 0.4s; }
+    .light:nth-child(4) { background: cyan; animation-delay: 0.6s; }
+    .light:nth-child(5) { background: magenta; animation-delay: 0.8s; }
+
+    @keyframes blink {
+      from { opacity: 1; }
+      to { opacity: 0.2; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="lights">
+    <div class="light"></div>
+    <div class="light"></div>
+    <div class="light"></div>
+    <div class="light"></div>
+    <div class="light"></div>
+  </div>
+
+  <h1>Happy Birthday, Bhumi! 🎂</h1>
+
+  <button onclick="showWish()">Show Wish 💌</button>
+  <button onclick="showImage()">Show Picture 📸</button>
+  <button onclick="launchBalloons()">Balloons 🎈</button>
+  <button onclick="startParty()">Party Time 🎉</button>
+
+  <div id="wish">Wishing you joy, love, and cake!May your this bday be filled with laughter, good health and great memories. I wish the best for you this year let all your wishes,hardwork and dedication come true bhena. 🍰🎁</div>
+
+  <img id="image" src="C:\Users\Trisha Joshi\OneDrive\Codes\demo\online py\IMG-20250618-WA0027[1].jpg" alt="Birthday Picture">
+
+  <div id="balloons">
+    <div class="balloon" style="background:#ff4d4d; left: 10%;"></div>
+    <div class="balloon" style="background:#66ccff; left: 30%;"></div>
+    <div class="balloon" style="background:#99ff99; left: 50%;"></div>
+    <div class="balloon" style="background:#ffff66; left: 70%;"></div>
+  </div>
+
+  <audio id="music" src="https://drive.google.com/file/d/1v_wY1d7ioFWFsdPecef6XSKzATiX_7D9/view?usp=sharing" preload="auto"></audio>
+
+  <canvas id="fireworks"></canvas>
+
+  <script>
+    function showWish() {
+      document.getElementById('wish').style.display = 'block';
+    }
+
+    function showImage() {
+      document.getElementById('image').style.display = 'block';
+    }
+
+    function launchBalloons() {
+      document.getElementById('balloons').style.display = 'block';
+    }
+
+    function startParty() {
+      const music = document.getElementById('music');
+      document.getElementById('music').play();
+      music.play().catch(() => alert("Click to enable sound"));
+
+      launchFireworks();
+    }
+
+    // Fireworks code
+    const canvas = document.getElementById('fireworks');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+
+    function Particle(x, y) {
+      this.x = x;
+      this.y = y;
+      this.radius = Math.random() * 3 + 1;
+      this.color = 'hsl(' + Math.random() * 360 + ', 100%, 60%)';
+      this.speedX = (Math.random() - 0.5) * 5;
+      this.speedY = (Math.random() - 0.5) * 5;
+      this.alpha = 1;
+    }
+
+    Particle.prototype.update = function () {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      this.alpha -= 0.01;
+    }
+
+    Particle.prototype.draw = function () {
+      ctx.globalAlpha = this.alpha;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    function animateFireworks() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].alpha <= 0) {
+          particles.splice(i, 1);
+          i--;
+        }
+      }
+      requestAnimationFrame(animateFireworks);
+    }
+
+    function createBurst() {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height / 2;
+      for (let i = 0; i < 100; i++) {
+        particles.push(new Particle(x, y));
+      }
+    }
+
+    function launchFireworks() {
+      setInterval(createBurst, 1000);
+      animateFireworks();
+    }
+  </script>
+</body>
+</html>
